@@ -1,0 +1,24 @@
+# Runtime parameters — loaded by AgentRegistry and passed to the graph.
+
+# Problem-size limits protect the solver from unbounded NP-hard workloads.
+max_variables: 200
+max_constraints: 500
+max_input_chars: 10000
+
+# CBC solver time limit, in seconds.
+solver_timeout_s: 10
+
+# LLM: injected via config["llm"] as a BaseLLM by the platform / entry adapter.
+# Model id, temperature and max_tokens belong to that injected client — this
+# template neither names a model nor builds a client. Inject a
+# low-temperature client if reproducible formulation matters.
+
+# Output security and audit settings.
+s3_gate_enabled: true
+mask_patterns: []
+audit_log_fields:
+  - template_id
+  - session_id
+  - variable_count
+  - constraint_count
+  - solver_status

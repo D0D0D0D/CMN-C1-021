@@ -1,0 +1,50 @@
+[project]
+name = "cmn-c1-021"
+version = "1.0.0"
+description = "OptimizationSolverAgent -- AgentCore Template (Cat 1, CMN)"
+requires-python = ">=3.11"
+dependencies = [
+    "agenticstar-agentcore[marketplace,openai]==1.0.3",
+    # AgentCore SDK (framework.*/shared.*) は pyproject 依存に含めない。
+    # 配布元のパッケージレジストリから --extra-index-url 経由で別途導入する
+    # （CI: run-tests before_script / ローカル: 同コマンド）。
+    "pulp==2.8.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.1.1",
+    "pytest-cov==5.0.0",
+    "pytest-asyncio==0.23.6",
+    "ruff==0.4.4",
+    "mypy==1.10.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+exclude = ["security_rules*", "tests*", "docs*"]
+
+[build-system]
+requires = ["setuptools==68.2.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "strict"
+
+[tool.ruff.lint.per-file-ignores]
+# 上流 scaffold master 由来の既知違反のみを該当ファイル限定で抑止する。
+# 上流配布の PB テストなので本体を書き換えず byte-identity を維持する
+# （scaffold 再同期で差分を出さないため）。正本自身にも同じ F541 が存在する。
+# conftest / src/graph/__init__.py は sys.path 調整や循環回避のため module-level
+# import が先頭に来ない（E402）。構造上の要請なので当該ファイル限定で抑止する。
+"tests/proof_of_boundary/test_import_isolation.py" = ["F541"]
+"tests/proof_of_boundary/test_state_safety.py" = ["F541"]
